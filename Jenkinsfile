@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        GENERATED_REPO_URL = 'git@github.com:YOUR_USER/generated-app-repo.git'
+        GENERATED_REPO_URL = 'https://github.com/konstantin13-hi/generated-app-repo'
         GENERATED_REPO_DIR = 'generated-app-repo'
     }
 
