@@ -1,0 +1,28 @@
+package {{ package }}.service;
+
+import {{ package }}.entity.{{ entity_name }};
+import {{ package }}.repository.{{ entity_name }}Repository;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class {{ entity_name }}Service {
+    private final {{ entity_name }}Repository repository;
+
+    public {{ entity_name }}Service({{ entity_name }}Repository repository) {
+        this.repository = repository;
+    }
+
+    public List<{{ entity_name }}> findAll() {
+        return repository.findAll();
+    }
+
+    public {{ entity_name }} save({{ entity_name }} item) {
+        return repository.save(item);
+    }
+
+    public void delete(Long id) {
+        repository.deleteById(id);
+    }
+}

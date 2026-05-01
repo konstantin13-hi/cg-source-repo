@@ -1,0 +1,32 @@
+package {{ package }}.controller;
+
+import {{ package }}.entity.{{ entity_name }};
+import {{ package }}.service.{{ entity_name }}Service;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/{{ entity_name|lower }}s")
+public class {{ entity_name }}Controller {
+    private final {{ entity_name }}Service service;
+
+    public {{ entity_name }}Controller({{ entity_name }}Service service) {
+        this.service = service;
+    }
+
+    @GetMapping
+    public List<{{ entity_name }}> findAll() {
+        return service.findAll();
+    }
+
+    @PostMapping
+    public {{ entity_name }} create(@RequestBody {{ entity_name }} item) {
+        return service.save(item);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        service.delete(id);
+    }
+}

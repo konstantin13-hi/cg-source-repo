@@ -1,0 +1,13 @@
+@startuml
+class Student {
+  Long id
+  String name
+  String email
+}
+
+class Course {
+  Long id
+  String title
+  Integer credits
+}
+@enduml

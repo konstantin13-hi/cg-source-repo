@@ -1,0 +1,15 @@
+project:
+  name: UniversityDemo
+  package: com.example.university
+
+entities:
+  Student:
+    fields:
+      id: Long
+      name: String
+      email: String
+  Course:
+    fields:
+      id: Long
+      title: String
+      credits: Integer

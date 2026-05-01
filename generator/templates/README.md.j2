@@ -1,0 +1,17 @@
+# {{ model.project.name }}
+
+This repository contains application code generated from design artifacts.
+
+## Run locally
+
+```bash
+mvn spring-boot:run
+```
+
+## Example endpoints
+
+{% for entity_name in model.entities.keys() %}
+- `GET /api/{{ entity_name|lower }}s`
+- `POST /api/{{ entity_name|lower }}s`
+- `DELETE /api/{{ entity_name|lower }}s/{id}`
+{% endfor %}

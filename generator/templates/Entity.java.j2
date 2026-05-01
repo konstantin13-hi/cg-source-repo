@@ -1,0 +1,27 @@
+package {{ package }}.entity;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@Entity
+public class {{ entity_name }} {
+{% for name, type in fields.items() %}
+    {% if name == "id" %}
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    {% endif %}
+    private {{ type|java_type }} {{ name }};
+{% endfor %}
+
+{% for name, type in fields.items() %}
+    public {{ type|java_type }} get{{ name[:1].upper() + name[1:] }}() {
+        return {{ name }};
+    }
+
+    public void set{{ name[:1].upper() + name[1:] }}({{ type|java_type }} {{ name }}) {
+        this.{{ name }} = {{ name }};
+    }
+{% endfor %}
+}
