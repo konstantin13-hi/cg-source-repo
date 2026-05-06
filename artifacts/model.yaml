@@ -13,3 +13,8 @@ entities:
       id: Long
       title: String
       credits: Integer
+  Teacher:
+    fields:
+      id: Long
+      name: String
+      department: String
