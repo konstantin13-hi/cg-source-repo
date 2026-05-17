@@ -29,4 +29,11 @@ public class {{ entity_name }}Controller {
     public void delete(@PathVariable Long id) {
         service.delete(id);
     }
+
+    @PutMapping("/{id}")
+    public {{ entity_name }} update(@PathVariable Long id, @RequestBody {{ entity_name }} item) {
+    return service.update(id, item);
+    }
+
+
 }

@@ -25,4 +25,8 @@ public class {{ entity_name }}Service {
     public void delete(Long id) {
         repository.deleteById(id);
     }
+    public {{ entity_name }} update(Long id, {{ entity_name }} item) {
+    item.setId(id);
+    return repository.save(item);
+    }
 }
