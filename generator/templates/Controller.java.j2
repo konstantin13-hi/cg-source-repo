@@ -3,6 +3,8 @@ package {{ package }}.controller;
 import {{ package }}.entity.{{ entity_name }};
 import {{ package }}.service.{{ entity_name }}Service;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
+
 
 import java.util.List;
 
@@ -24,14 +26,14 @@ public class {{ entity_name }}Controller {
 
 {% if "create" in operations %}
     @PostMapping
-    public {{ entity_name }} create(@RequestBody {{ entity_name }} item) {
+    public {{ entity_name }} create(@Valid @RequestBody {{ entity_name }} item) {
         return service.save(item);
     }
 {% endif %}
 
 {% if "update" in operations %}
     @PutMapping("/{id}")
-    public {{ entity_name }} update(@PathVariable Long id, @RequestBody {{ entity_name }} item) {
+    public {{ entity_name }} update(@PathVariable Long id, @Valid @RequestBody {{ entity_name }} item) {
         return service.update(id, item);
     }
 {% endif %}

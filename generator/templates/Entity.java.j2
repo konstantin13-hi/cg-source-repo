@@ -2,16 +2,28 @@ package {{ package }}.entity;
 
 import jakarta.persistence.*;
 import java.util.List;
+import jakarta.validation.constraints.*;
 
 @Entity
 public class {{ entity_name }} {
-{% for name, type in fields.items() %}
+{% for name, field in fields.items() %}
     {% if name == "id" %}
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     {% endif %}
-    private {{ type|java_type }} {{ name }};
+    {% if field.get("required") %}
+    @NotNull
+    {% endif %}
+    {% if field.get("pattern") == "email" %}
+    @Email
+    {% endif %}
+    {% if field.get("type") == "String" and (field.get("min") or field.get("max")) %}
+    @Size{% if field.get("min") and field.get("max") %}(min = {{ field.get("min") }}, max = {{ field.get("max") }}){% elif field.get("min") %}(min = {{ field.get("min") }}){% elif field.get("max") %}(max = {{ field.get("max") }}){% endif %}
+    {% endif %}
+    private {{ field.type|java_type }} {{ name }};
 {% endfor %}
+
+
 
 {% for relation in relations %}
     {% if relation.type == "ManyToOne" %}
@@ -35,12 +47,12 @@ public class {{ entity_name }} {
     {% endif %}
 {% endfor %}
 
-{% for name, type in fields.items() %}
-    public {{ type|java_type }} get{{ name[:1].upper() + name[1:] }}() {
+{% for name, field in fields.items() %}
+    public {{ field.type|java_type }} get{{ name[:1].upper() + name[1:] }}() {
         return {{ name }};
     }
 
-    public void set{{ name[:1].upper() + name[1:] }}({{ type|java_type }} {{ name }}) {
+    public void set{{ name[:1].upper() + name[1:] }}({{ field.type|java_type }} {{ name }}) {
         this.{{ name }} = {{ name }};
     }
 {% endfor %}

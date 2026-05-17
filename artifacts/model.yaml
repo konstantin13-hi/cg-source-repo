@@ -5,16 +5,45 @@ project:
 entities:
   Student:
     fields:
-      id: Long
-      name: String
-      email: String
+      id:
+        type: Long
+
+      name:
+        type: String
+        required: true
+        min: 2
+        max: 50
+
+      email:
+        type: String
+        required: true
+        pattern: email
+
   Course:
     fields:
-      id: Long
-      title: String
-      credits: Integer
+      id:
+        type: Long
+
+      title:
+        type: String
+        required: true
+
+      credits:
+        type: Integer
+
   Teacher:
     fields:
-      id: Long
-      name: String
-      department: String
+      id:
+        type: Long
+
+      name:
+        type: String
+        required: true
+
+      department:
+        type: String
+
+    relations:
+      - type: ManyToMany
+        target: Course
+        field: courses
