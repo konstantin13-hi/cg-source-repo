@@ -1,9 +1,7 @@
 package {{ package }}.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import java.util.List;
 
 @Entity
 public class {{ entity_name }} {
@@ -15,6 +13,28 @@ public class {{ entity_name }} {
     private {{ type|java_type }} {{ name }};
 {% endfor %}
 
+{% for relation in relations %}
+    {% if relation.type == "ManyToOne" %}
+    @ManyToOne
+    private {{ relation.target }} {{ relation.field }};
+    {% endif %}
+
+    {% if relation.type == "OneToOne" %}
+    @OneToOne
+    private {{ relation.target }} {{ relation.field }};
+    {% endif %}
+
+    {% if relation.type == "OneToMany" %}
+    @OneToMany(mappedBy = "{{ relation.mappedBy }}")
+    private List<{{ relation.target }}> {{ relation.field }};
+    {% endif %}
+
+    {% if relation.type == "ManyToMany" %}
+    @ManyToMany
+    private List<{{ relation.target }}> {{ relation.field }};
+    {% endif %}
+{% endfor %}
+
 {% for name, type in fields.items() %}
     public {{ type|java_type }} get{{ name[:1].upper() + name[1:] }}() {
         return {{ name }};
@@ -23,5 +43,25 @@ public class {{ entity_name }} {
     public void set{{ name[:1].upper() + name[1:] }}({{ type|java_type }} {{ name }}) {
         this.{{ name }} = {{ name }};
     }
+{% endfor %}
+
+{% for relation in relations %}
+    {% if relation.type == "OneToMany" or relation.type == "ManyToMany" %}
+    public List<{{ relation.target }}> get{{ relation.field[:1].upper() + relation.field[1:] }}() {
+        return {{ relation.field }};
+    }
+
+    public void set{{ relation.field[:1].upper() + relation.field[1:] }}(List<{{ relation.target }}> {{ relation.field }}) {
+        this.{{ relation.field }} = {{ relation.field }};
+    }
+    {% else %}
+    public {{ relation.target }} get{{ relation.field[:1].upper() + relation.field[1:] }}() {
+        return {{ relation.field }};
+    }
+
+    public void set{{ relation.field[:1].upper() + relation.field[1:] }}({{ relation.target }} {{ relation.field }}) {
+        this.{{ relation.field }} = {{ relation.field }};
+    }
+    {% endif %}
 {% endfor %}
 }

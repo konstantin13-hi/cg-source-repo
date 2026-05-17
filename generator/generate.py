@@ -54,7 +54,15 @@ def main():
 
     for entity_name, entity in model["entities"].items():
         fields = entity["fields"]
-        ctx = {"package": package, "entity_name": entity_name, "fields": fields}
+        relations = entity.get("relations", [])
+
+        ctx = {
+            "package": package,
+            "entity_name": entity_name,
+            "fields": fields,
+            "relations": relations,
+        }
+
         (app_src / "entity" / f"{entity_name}.java").write_text(env.get_template("Entity.java.j2").render(**ctx), encoding="utf-8")
         (app_src / "repository" / f"{entity_name}Repository.java").write_text(env.get_template("Repository.java.j2").render(**ctx), encoding="utf-8")
         (app_src / "service" / f"{entity_name}Service.java").write_text(env.get_template("Service.java.j2").render(**ctx), encoding="utf-8")
