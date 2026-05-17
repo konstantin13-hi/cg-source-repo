@@ -22,11 +22,12 @@ public class {{ entity_name }}Service {
         return repository.save(item);
     }
 
+    public {{ entity_name }} update(Long id, {{ entity_name }} item) {
+        item.setId(id);
+        return repository.save(item);
+    }
+
     public void delete(Long id) {
         repository.deleteById(id);
-    }
-    public {{ entity_name }} update(Long id, {{ entity_name }} item) {
-    item.setId(id);
-    return repository.save(item);
     }
 }

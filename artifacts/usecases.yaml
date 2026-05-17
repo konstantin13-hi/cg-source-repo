@@ -1,0 +1,15 @@
+useCases:
+  - name: ViewStudents
+    actor: Admin
+    entity: Student
+    operation: read
+
+  - name: CreateStudent
+    actor: Admin
+    entity: Student
+    operation: create
+
+  - name: ViewCourses
+    actor: Student
+    entity: Course
+    operation: read
