@@ -54,6 +54,16 @@ pipeline {
                 }
             }
         }
+
+        stage('Build and test generated application') {
+            steps {
+                dir("${GENERATED_REPO_DIR}") {
+                  sh '''
+                    mvn clean test
+                '''
+                 }
+            }
+        }
     }
 
     post {
