@@ -109,35 +109,18 @@ pipeline {
         }
 
         stage('Deploy application') {
-
-             steps {
-
+            steps {
                 sh '''
-
-                     echo "Stopping previous application container..."
-
-                     docker rm -f generated-app || true
+                    echo "Stopping previous application container..."
+                    docker rm -f generated-app || true
 
                     echo "Starting generated-app:${BUILD_NUMBER}..."
+                    docker run -d --name generated-app -p 8080:8080 --restart unless-stopped generated-app:${BUILD_NUMBER}
 
-                     docker run -d \
-
-                     --name generated-app \
-
-                         -p 8080:8080 \
-
-                         --restart unless-stopped \
-
-                         generated-app:${BUILD_NUMBER}
-
-                        echo "Application container started."
-
-                         docker ps --filter "name=generated-app"
-
+                    echo "Application container started."
+                    docker ps --filter "name=generated-app"
                 '''
-
-                 }
-
+             }
         }
 
         stage('Health check') {
@@ -167,11 +150,11 @@ pipeline {
 
     post {
         success {
-            echo 'CG/CI pipeline completed successfully.'
+            echo 'CG/CI/CD pipeline completed successfully.'
         }
 
         failure {
-            echo 'CG/CI pipeline failed.'
+            echo 'CG/CI/CD pipeline failed.'
         }
     }
 }
