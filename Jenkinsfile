@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    environment {
+        GENERATED_REPO_URL = 'git@github.com:konstantin13-hi/generated-app-repo.git'
+        GENERATED_REPO_DIR = 'generated-app-repo'
+    }
+
     stages {
         stage('Setup Python environment') {
             steps {
@@ -18,15 +23,46 @@ pipeline {
                 '''
             }
         }
+
+        stage('Clone generated application repository') {
+            steps {
+                sh '''
+                    rm -rf "$GENERATED_REPO_DIR"
+                    git clone "$GENERATED_REPO_URL" "$GENERATED_REPO_DIR"
+                '''
+            }
+        }
+
+        stage('Generate application code') {
+            steps {
+                sh '''
+                    .venv/bin/python generator/generate.py artifacts/model.yaml "$GENERATED_REPO_DIR"
+                '''
+            }
+        }
+
+        stage('Verify generated application') {
+            steps {
+                dir("${GENERATED_REPO_DIR}") {
+                    sh '''
+                        echo "Generated application files:"
+                        ls -la
+                        test -f pom.xml
+                        test -f Dockerfile
+                        test -d src
+                    '''
+                }
+            }
+        }
     }
 
     post {
         success {
-            echo 'CG validation pipeline completed successfully.'
+            echo 'CG pipeline completed successfully.'
         }
 
         failure {
-            echo 'CG validation pipeline failed.'
+            echo 'CG pipeline failed.'
         }
     }
 }
