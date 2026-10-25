@@ -1,49 +1,32 @@
 pipeline {
     agent any
 
-    environment {
-        GENERATED_REPO_URL = 'https://github.com/konstantin13-hi/generated-app-repo'
-        GENERATED_REPO_DIR = 'generated-app-repo'
-    }
-
     stages {
-        stage('Install generator dependencies') {
+        stage('Setup Python environment') {
             steps {
-                sh 'python3 -m pip install -r requirements.txt'
+                sh '''
+                    python3 -m venv .venv
+                    .venv/bin/python -m pip install -r requirements.txt
+                '''
             }
         }
 
         stage('Validate design artifacts') {
             steps {
-                sh 'python3 generator/validate_model.py artifacts/model.yaml'
-            }
-        }
-
-        stage('Clone generated code repository') {
-            steps {
                 sh '''
-                rm -rf $GENERATED_REPO_DIR
-                git clone $GENERATED_REPO_URL $GENERATED_REPO_DIR
+                    .venv/bin/python generator/validate_model.py artifacts/model.yaml
                 '''
             }
         }
+    }
 
-        stage('Generate application code') {
-            steps {
-                sh 'python3 generator/generate.py artifacts/model.yaml $GENERATED_REPO_DIR'
-            }
+    post {
+        success {
+            echo 'CG validation pipeline completed successfully.'
         }
 
-        stage('Commit generated code') {
-            steps {
-                dir("${GENERATED_REPO_DIR}") {
-                    sh '''
-                    git add .
-                    git commit -m "CG: regenerate application from project artifacts" || echo "No changes to commit"
-                    git push origin main
-                    '''
-                }
-            }
+        failure {
+            echo 'CG validation pipeline failed.'
         }
     }
 }
