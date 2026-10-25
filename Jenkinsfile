@@ -96,7 +96,18 @@ pipeline {
                 }
             }
         }
-    }
+
+        stage('Build Docker image') {
+            steps {
+                 dir("${GENERATED_REPO_DIR}") {
+                     sh '''
+                       docker build -t generated-app:${BUILD_NUMBER} .
+                       docker images generated-app
+                     '''
+                    }
+           }
+        }
+}
 
     post {
         success {
