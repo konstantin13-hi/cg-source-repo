@@ -58,33 +58,53 @@ pipeline {
         stage('Build and test generated application') {
             steps {
                 dir("${GENERATED_REPO_DIR}") {
-                  sh '''
-                    mvn clean test
-                '''
-                 }
+                    sh '''
+                        mvn clean test
+                    '''
+                }
             }
         }
 
         stage('Package generated application') {
             steps {
-                 dir("${GENERATED_REPO_DIR}") {
+                dir("${GENERATED_REPO_DIR}") {
                     sh '''
-                     mvn package -DskipTests
-                     test -f target/*.jar
-                     ls -lh target/*.jar
-            '''
+                        mvn package -DskipTests
+                        echo "Generated JAR:"
+                        ls -lh target/*.jar
+                    '''
                 }
-             }
+            }
+        }
+
+        stage('Publish generated application') {
+            steps {
+                dir("${GENERATED_REPO_DIR}") {
+                    sh '''
+                        git config user.name "Jenkins CG/CD"
+                        git config user.email "jenkins@devops-01"
+
+                        git add .
+
+                        if git diff --cached --quiet; then
+                            echo "No generated changes to commit."
+                        else
+                            git commit -m "CG: regenerate application from project artifacts"
+                            git push origin main
+                        fi
+                    '''
+                }
+            }
         }
     }
 
     post {
         success {
-            echo 'CG pipeline completed successfully.'
+            echo 'CG/CI pipeline completed successfully.'
         }
 
         failure {
-            echo 'CG pipeline failed.'
+            echo 'CG/CI pipeline failed.'
         }
     }
 }
