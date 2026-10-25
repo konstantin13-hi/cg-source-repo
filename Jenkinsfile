@@ -107,6 +107,62 @@ pipeline {
                     }
            }
         }
+
+        stage('Deploy application') {
+
+             steps {
+
+                sh '''
+
+                     echo "Stopping previous application container..."
+
+                     docker rm -f generated-app || true
+
+                    echo "Starting generated-app:${BUILD_NUMBER}..."
+
+                     docker run -d \
+
+                     --name generated-app \
+
+                         -p 8080:8080 \
+
+                         --restart unless-stopped \
+
+                         generated-app:${BUILD_NUMBER}
+
+                        echo "Application container started."
+
+                         docker ps --filter "name=generated-app"
+
+                '''
+
+                 }
+
+        }
+
+        stage('Health check') {
+            steps {
+                sh '''
+                     echo "Waiting for application to start..."
+
+                    for i in $(seq 1 30); do
+                        if curl -fsS http://localhost:8080/api/students > /dev/null; then
+                            echo "Application is healthy."
+                            exit 0
+                        fi
+
+                        echo "Waiting for application... attempt $i/30"
+                        sleep 2
+                    done
+
+                    echo "Application failed health check."
+                    docker logs generated-app
+                    exit 1
+                 '''
+                 }
+        }
+
+
 }
 
     post {
