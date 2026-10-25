@@ -64,6 +64,18 @@ pipeline {
                  }
             }
         }
+
+        stage('Package generated application') {
+            steps {
+                 dir("${GENERATED_REPO_DIR}") {
+                    sh '''
+                     mvn package -DskipTests
+                     test -f target/*.jar
+                     ls -lh target/*.jar
+            '''
+                }
+             }
+        }
     }
 
     post {
